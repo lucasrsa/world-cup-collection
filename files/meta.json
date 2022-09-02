@@ -1,0 +1,51 @@
+{
+  "fifa-world-cup": {
+    "tags": [
+      "FWC"
+    ],
+    "size": 29
+  },
+  "coca-cola": {
+    "tags": [
+      "CC"
+    ],
+    "size": 8
+  },
+  "countries": {
+    "tags": [
+      "QTR",
+      "ECU",
+      "SEN",
+      "NED",
+      "ENG",
+      "IRA",
+      "USA",
+      "WAL",
+      "ARG",
+      "KSA",
+      "MEX",
+      "POL",
+      "FRA",
+      "AUS",
+      "DEN",
+      "TUN",
+      "SPA",
+      "CRC",
+      "GER",
+      "JAP",
+      "BEL",
+      "CAN",
+      "MOR",
+      "CRO",
+      "BRA",
+      "SRB",
+      "SWI",
+      "CRM",
+      "POR",
+      "GHA",
+      "URU",
+      "KOR"
+    ],
+    "size": 20
+  }
+}

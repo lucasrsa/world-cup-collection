@@ -1,58 +1,64 @@
-import json
-from os.path import exists
-from helpers import digest_card
+class Pool:
+    def add_team(self, team):
+        if team.region in self.regions:
+            raise ValueError(f"{self.__repr__()} already have a team representing the {team.region} region.")
+        team.pool = self.number
+        self.teams.append(team)
+        self.regions.append(team.region)
+
+    def __repr__(self):
+        return f"Pool {str(self.number)}"
+
+    def __str__(self):
+        return f"{self.__repr__()}: {str(self.teams)}"
+
+    def __init__(self, n):
+        self.teams = []
+        self.regions = []
+        self.number = n
 
 
-class Album:
-    __missing = {}
-    __acquired = {}
-    __doubled = {}
+class Group:
+    __max_size = 4
 
-    def summarize(self):
-        print("Missing: ", sum([len(x) for x in self.__missing.values()]))
-        print("Acquired: ", sum([len(x) for x in self.__acquired.values()]))
-        print("Doubled: ", sum([len(x) for x in self.__doubled.values()]))
+    def add_team(self, team):
+        if not len(self.teams) < self.__max_size:
+            raise ValueError(f"{self.__repr__()} is already full!")
+        if team.pool in self.pools:
+            raise ValueError(f"{self.__repr__()} already have a team from Pool {team.pool}.")
+        if team.region in self.regions:
+            raise ValueError(f"{self.__repr__()} already have a team representing the {team.region} region.")
+        self.teams.append(team)
+        self.pools.append(team.pool)
+        self.regions.append(team.region)
 
-    def acquire(self, card):
-        tag, value = digest_card(card)
-        if value in self.__missing[tag]:
-            self.__missing[tag].remove(value)
-            self.__acquired[tag].append(value)
-        else:
-            self.__doubled[tag].append(value)
+    def __eq__(self, obj):
+        return isinstance(obj, Group) and all([team in self.teams for team in obj.teams])
 
-    def remove(self, card):
-        tag, value = digest_card(card)
-        if value in self.__doubled[tag]:
-            self.__doubled[tag].remove(value)
-        else:
-            raise ValueError("Attempted to remove card not doubled")
+    def __repr__(self):
+        return self.name
 
-    def save(self, file="files/now.json"):
-        with open(file, "w") as f:
-            f.write(json.dumps({"missing": self.__missing, "acquired": self.__acquired, "doubled": self.__doubled, }))
+    def __str__(self):
+        return f"{self.name}: {str(self.teams)}"
 
-    def load(self, file="files/now.json"):
-        with open(file, "r") as f:
-            d = json.loads(f.read())
-            self.__missing = d["missing"]
-            self.__acquired = d["acquired"]
-            self.__doubled = d["doubled"]
+    def __init__(self, name):
+        self.teams = []
+        self.regions = []
+        self.pools = []
+        self.name = name
 
-    def show(self):
-        print(self.__missing)
-        print(self.__acquired)
-        print(self.__doubled)
 
-    def __init__(self, file="files/now.json"):
-        if exists(file):
-            self.load(file)
-        else:
-            with open("files/meta.json", "r") as f:
-                for v in json.loads(f.read()).values():
-                    for tag in v["tags"]:
-                        self.__missing[tag] = []
-                        self.__acquired[tag] = []
-                        self.__doubled[tag] = []
-                        for i in range(v["size"]):
-                            self.__missing[tag].append(i + 1)
+class Team:
+    def __eq__(self, obj):
+        return isinstance(obj, Team) and obj.name == self.name and obj.region == self.region
+
+    def __repr__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
+
+    def __init__(self, name, region):
+        self.pool = 0
+        self.name = name
+        self.region = region
